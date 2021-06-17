@@ -2,7 +2,7 @@
   "name": "operating-tools",
   "version": "0.0.1",
   "author": "wetsion",
-  "description": "运营工具",
+  "description": "刘颖的运营工具",
   "license": "MIT",
   "main": "./dist/electron/main.js",
   "scripts": {
