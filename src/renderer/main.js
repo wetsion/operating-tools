@@ -6,6 +6,10 @@ import store from './store'
 // 引用element
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+// 引用echarts
+import echarts from 'echarts'
+import echartswordcloud from 'echarts-wordcloud'
+
 import './permission'
 // 日志
 import './error'
@@ -21,6 +25,8 @@ if (!process.env.IS_WEB) {
 }
 
 Vue.use(ElementUI)
+
+Vue.prototype.$echarts = echarts
 
 Vue.config.productionTip = false
 /* eslint-disable no-new */

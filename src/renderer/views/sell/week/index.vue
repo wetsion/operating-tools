@@ -19,11 +19,6 @@
     import XLSX from 'xlsx'
     import moment from 'moment'
 
-    import {GridComponent, TitleComponent, ToolboxComponent, TooltipComponent, LegendComponent} from 'echarts/components'
-    import {PieChart, LineChart, BarChart} from 'echarts/charts'
-    let Echarts = require('echarts/lib/echarts')
-    Echarts.use([PieChart, LineChart, BarChart, GridComponent, TitleComponent, ToolboxComponent, TooltipComponent, LegendComponent])
-
     export default {
         name: 'weekcharts',
         data () {
@@ -96,7 +91,7 @@
                 return map
             },
             drawWeekChart (map) {
-                let myChart = Echarts.init(this.$refs.weekChart)
+                let myChart = this.$echarts.init(this.$refs.weekChart)
                 myChart.setOption({
                     title: {
                         text: '周销售数据',

@@ -18,11 +18,6 @@
 <script>
     import XLSX from 'xlsx'
     import {create, all} from 'mathjs'
-    import {GridComponent, TitleComponent, ToolboxComponent, TooltipComponent, LegendComponent} from 'echarts/components'
-    import {PieChart, LineChart} from 'echarts/charts'
-    let Echarts = require('echarts/lib/echarts')
-    Echarts.use([PieChart, LineChart, GridComponent, TitleComponent, ToolboxComponent, TooltipComponent, LegendComponent])
-
     const mathjs = create(all)
     mathjs.config({
         number: 'BigNumber',
@@ -108,7 +103,7 @@
                 return map
             },
             drawSummaryChart (map, lastWeekMap) {
-                let myChart = Echarts.init(this.$refs.contrastChart)
+                let myChart = this.$echarts.init(this.$refs.contrastChart)
                 myChart.setOption({
                     title: {
                         text: '上周本周增长率',

@@ -14,12 +14,7 @@
 
 <script>
     import XLSX from 'xlsx'
-    import moment from 'moment'
-    require('echarts/lib/chart/bar')
-    import {GridComponent, TitleComponent, ToolboxComponent, TooltipComponent, LegendComponent} from 'echarts/components'
-    let Echarts = require('echarts/lib/echarts')
-    Echarts.use([GridComponent, TitleComponent, ToolboxComponent, TooltipComponent, LegendComponent])
-
+    import { formatDate } from "@/utils/dateUtil"
 
     export default {
         name: 'commercial',
@@ -40,7 +35,7 @@
             },
             drawCommercialChart (xAxisData, seriesData) {
                 let colors = ['#5793f3', '#d14a61', '#675bba'];
-                let myChart = Echarts.init(this.$refs.commercialChart)
+                let myChart = this.$echarts.init(this.$refs.commercialChart)
                 myChart.setOption({
                     title: {
                         text: '广告数据'
@@ -207,8 +202,7 @@
                 for (var i = 0; i < sheet1List.length; i++) {
                     let row = sheet1List[i]
                     let date = row['日期']
-                    console.log(moment(date).format('YYYY-MM-DD'))
-                    dateArray.push(moment(date).format('YYYY-MM-DD'))
+                    dateArray.push(formatDate(date))
                 }
                 console.log(dateArray)
                 return dateArray

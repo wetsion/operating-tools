@@ -102,5 +102,17 @@ export default [
         meta: { title: '广告', icon: 'table' }
       }
     ]
+  },
+  {
+    path: '/wordcount',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: '搜索词统计',
+        component: () => import('@/views/wordcount/index'),
+        meta: { title: '搜索词统计', icon: 'table' }
+      }
+    ]
   }
 ]
