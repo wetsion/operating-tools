@@ -5,18 +5,21 @@
             <input type="file" ref="pathClear"
                    id="implUserExcel" @change="implUserExcel" accept=".xlsx"/>
         </p>
-        <p>
-
-        </p>
-        <p>
-        <div ref="contrastChart" style="width: 90%;height: 400px" v-loading="loading"
-             element-loading-text="文件读取中"></div>
-        </p>
+        <p></p>
+        <div ref="contrastChart" style="width: 90%;height: 400px" v-loading="loading" element-loading-text="文件读取中"></div>
+        
+        <p></p>
+        <div ref="contrastBarChart" style="width: 90%;height: 600px" v-loading="loading" element-loading-text="文件读取中"></div>
+        <br/>
+        <p></p>
+        <div ref="contrastLineChart" style="width: 90%;height: 600px" v-loading="loading" element-loading-text="文件读取中"></div>
+        
     </div>
 </template>
 
 <script>
     import XLSX from 'xlsx'
+    import moment from 'moment'
     import {create, all} from 'mathjs'
     const mathjs = create(all)
     mathjs.config({
@@ -76,6 +79,8 @@
                     let map = this.rebuildData(uploadData)
                     let lastWeekMap = this.rebuildLastData(uploadData)
                     this.drawSummaryChart(map, lastWeekMap)
+                    this.drawContrastBarChart(map, lastWeekMap)
+                    this.drawContrastLineChart(map, lastWeekMap)
                 }
                 reader.onloadend = () => {
                     console.log('load end')
@@ -106,7 +111,7 @@
                 let myChart = this.$echarts.init(this.$refs.contrastChart)
                 myChart.setOption({
                     title: {
-                        text: '上周本周增长率',
+                        text: '上周本周增长率饼图',
                         left: 'center'
                     },
                     tooltip: {
@@ -130,7 +135,7 @@
                             data: [
                                 {value: this.cpt(map['A12'], lastWeekMap['A12']), name: '订单商品种类数'},
                                 {value: this.cpt(map['B12'], lastWeekMap['B12']), name: '已订购商品数量'},
-                                {value: this.cpt(map['C12'], lastWeekMap['C12']), name: '已订购商品销售量'},
+                                {value: this.cpt(map['C12'], lastWeekMap['C12']), name: '已订购商品销售额'},
                                 {value: this.cpt(map['D12'], lastWeekMap['D12']), name: '平均每种订单商品数量'},
                                 {value: this.cpt(map['E12'], lastWeekMap['E12']), name: '平均每种订单商品金额'}
                             ],
@@ -157,6 +162,162 @@
                 let r = mathjs.number(result).toFixed(2) * 100
                 console.log(r.toFixed(2))
                 return r.toFixed(2)
+            },
+            drawContrastLineChart (map, lastWeekMap) {
+                let contrastLineChart = this.$echarts.init(this.$refs.contrastLineChart)
+                contrastLineChart.setOption({
+                    title: {
+                        text: '上周本周销售额趋势图',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{a} <br/> {b} : $ {c}'
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 30
+                            },
+                            data: [
+                                this.formatDate(lastWeekMap['A16']),
+                                this.formatDate(lastWeekMap['A17']),
+                                this.formatDate(lastWeekMap['A18']),
+                                this.formatDate(lastWeekMap['A19']),
+                                this.formatDate(lastWeekMap['A20']),
+                                this.formatDate(lastWeekMap['A21']),
+                                this.formatDate(lastWeekMap['A22']),
+                                this.formatDate(map['A16']),
+                                this.formatDate(map['A17']),
+                                this.formatDate(map['A18']),
+                                this.formatDate(map['A19']),
+                                this.formatDate(map['A20']),
+                                this.formatDate(map['A21']),
+                                this.formatDate(map['A22']),
+                            ],
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            name: '销售额',
+                            axisLabel: {
+                                formatter: 'US$ {value}'
+                            }
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '销售额',
+                            type: 'line',
+                            data: [
+                                lastWeekMap['B16'], 
+                                lastWeekMap['B17'], 
+                                lastWeekMap['B18'], 
+                                lastWeekMap['B19'], 
+                                lastWeekMap['B20'], 
+                                lastWeekMap['B21'], 
+                                lastWeekMap['B22'],
+                                null, null, null, null, null, null, null
+                            ]
+                        },
+                        {
+                            name: '销售额',
+                            type: 'line',
+                            data: [
+                                null, null, null, null, null, null, null,
+                                map['B16'], map['B17'], map['B18'], map['B19'], map['B20'], map['B21'], map['B22']
+                            ]
+                        },
+                    ]
+                })
+            },
+            drawContrastBarChart (map, lastWeekMap) {
+                let contrastBarChart = this.$echarts.init(this.$refs.contrastBarChart)
+                contrastBarChart.setOption({
+                    title: {
+                        text: '上周本周增长率柱状图',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        // trigger: 'item',
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            crossStyle: {
+                                color: '#999'
+                            }
+                        },
+                        formatter: '{a} <br/> {b} : {c}%'
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 20
+                            },
+                            data: [
+                                '已订购商品销售额',
+                                '已订购商品数量',
+                                '订单商品种类数',
+                                '平均每种订单商品数量',
+                                '平均每种订单商品金额'
+                            ],
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            name: '增长率',
+                            axisLabel: {
+                                formatter: '{value} %'
+                            }
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '增长率',
+                            type: 'bar',
+                            data: [
+                                this.cpt(map['C12'], lastWeekMap['C12']),
+                                this.cpt(map['B12'], lastWeekMap['B12']),
+                                this.cpt(map['A12'], lastWeekMap['A12']),
+                                this.cpt(map['D12'], lastWeekMap['D12']),
+                                this.cpt(map['E12'], lastWeekMap['E12'])
+                            ]
+                        }
+                    ]
+                })
+            },
+            formatDate (date) {
+                return moment(date).format('YYYY-MM-DD')
             }
         }
     }
